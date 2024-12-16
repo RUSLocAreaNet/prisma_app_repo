@@ -16,7 +16,7 @@ model User {
   updatedAt DateTime @updatedAt
   email     String   @unique
   password  String
-  profileId Int      @unique
+  profileId Int?      @unique
   profile   Profile?  @relation()
 }
 
@@ -27,4 +27,41 @@ model Profile{
     userId    Int   @unique
     firstName String
     lastName  String
+}
+
+enum Emoji {
+  THUMBSUP
+  PARTY
+  HANDSUP
+}
+
+enum Department {
+  MARKETING
+  SALES
+  ENGINEERING
+  HR
+}
+
+enum Color {
+  RED
+  GREEN
+  YELLOW
+  BLUE
+  WHITE
+}
+
+model KudoStyle {
+  id              Int @id 
+  backgroundColor String CHECK(backgroundColor in "RED", "GREEN", "YELLOW", "BLUE", "WHITE") @default ("BLUE")
+  textColor       String CHECK(textColor in "RED", "GREEN", "YELLOW", "BLUE", "WHITE") @default ("WHITE")
+  emoji            String CHECK(emoji in "THUMBSUP", "PARTY", "HANDSUP") @default ("THUMBSUP")
+  kudos           Kudo[] @relation
+}
+
+model Kudo {
+  id          Int     @id @default(autoincrement())
+  message     String
+  createdAt   DateTime   @default(now())
+  styleId     Int       
+  style       KudoStyle?  @relation(fields: [styleId], references: [id])
 }

@@ -1,7 +1,7 @@
 import type { RegisterForm, LoginForm } from './types.server'
 import { prisma } from './prisma.server'
 import { redirect, json, createCookieSessionStorage } from '@remix-run/node'
-import { createUser } from './user.server'
+import { createUser} from './user.server'
 import bcrypt from 'bcryptjs'
 
 const sessionSecret = process.env.SESSION_SECRET
@@ -26,6 +26,7 @@ export async function register(user: RegisterForm) {
   if (exists) {
     return json({ error: `User already exists with that email` }, { status: 400 })
   }
+  //const profileNumber = await CreateProfile(user)
   const newUser = await createUser(user)
 if (!newUser) {
   return json(
