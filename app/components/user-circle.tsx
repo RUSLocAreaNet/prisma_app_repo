@@ -7,6 +7,9 @@ interface props {
 }
 
 export function UserCircle({ profile, onClick, className }: props) {
+
+  console.log("PROFILE IM DRAWING ATM: " + profile.firstName + " " + profile.lastName)
+
   return (
     <div
       className={`${className} cursor-pointer bg-gray-400 rounded-full flex justify-center items-center`}

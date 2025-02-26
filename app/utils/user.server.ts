@@ -11,10 +11,11 @@ export const createUser = async (user: RegisterForm/*, profileId : number*/) => 
     data: {
       email: user.email,
       password: passwordHash,
-      profileId: -1
+      profileId: -3
     },
   })
 
+  console.log(newUser);
   const newProfile = await prisma.profile.create({
     data: {
       firstName: user.firstName,
@@ -23,7 +24,8 @@ export const createUser = async (user: RegisterForm/*, profileId : number*/) => 
     }
   })
 
-  prisma.user.update({
+  console.log(newProfile);
+  await prisma.user.update({
     where: {
       id: newUser.id,
     },
@@ -32,13 +34,22 @@ export const createUser = async (user: RegisterForm/*, profileId : number*/) => 
     }
   })
 
+  var checkNewUser = await prisma.user.findFirst(
+    {
+      where: {
+        id: newUser.id
+      }
+    })
+  
+    console.log("CHECKED NEW USER: " + checkNewUser)
+
   return { id: newUser.id, email: user.email }
 }
 
-export const getOtherUsers = async (userId: string) => {
+export const getOtherUsers = async (userId: number) => {
   return prisma.user.findMany({
     where: {
-      id: {not: Number(userId)},
+      id: {not: userId},
     },
     orderBy: {
       profile: {
@@ -48,13 +59,29 @@ export const getOtherUsers = async (userId: string) => {
   })
 }
 
-export const getOtherProfiles = async (userId: string) => {
+export const getOtherProfiles = async (userId: number) => {
   return prisma.profile.findMany({
     where: {
-      userId: {not: Number(userId)},
+      userId: {not: userId},
     },
     orderBy: {
       firstName: "asc"
+    },
+  })
+}
+
+export const getUserById = async (userId: number) => {
+  return await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+  })
+}
+
+export const getProfileByUserId = async (userId: number) => {
+  return await prisma.profile.findUnique({
+    where: {
+      userId: userId
     },
   })
 }
