@@ -1,5 +1,5 @@
 import { json,LoaderFunction } from '@remix-run/node'
-import { requireUserId } from '~/utils/auth.server'
+import { requireUserId, getUser, getUserWithProfile } from '~/utils/auth.server'
 import { Layout } from '~/components/layout'
 import { UserPanel } from '~/components/user-panel'
 import { getOtherUsers, getOtherProfiles } from '~/utils/user.server'
@@ -66,14 +66,17 @@ export const loader: LoaderFunction = async ({ request }) => {
   const kudos = await getFilteredKudos(userId, sortOptions, textFilter)
   const recentKudos = await getRecentKudos()
 
-  return json({users, profiles, kudos, recentKudos})
+  const currentUser = await getUserWithProfile(request)
+
+  return json({users, profiles, kudos, recentKudos, currentUser})
 }
 
 export default function Home() {
-  const {users, profiles, kudos, recentKudos} : any = useLoaderData()
+  const {users, profiles, kudos, recentKudos, currentUser} : any = useLoaderData()
 
   console.log("ALL PROFILES")
 
+  console.log("Current user: ", currentUser)
   console.log("recent kudos", recentKudos)
 
   let ProfilesArray : any[] = Object.keys(profiles).map((key) => profiles[key]);
@@ -93,7 +96,7 @@ export default function Home() {
         <UserPanel users={users} profiles={profiles}/>
         <div className="flex-1 flex flex-col">
           {/* Search Bar Goes Here */}
-          <SearchBar />
+          <SearchBar profile={currentUser.profile}/>
           <div className="flex-1 flex">
             <div className="w-full p-10 flex flex-col gap-y-4">
               {kudos.map((kudo: KudoWithProfile) => (

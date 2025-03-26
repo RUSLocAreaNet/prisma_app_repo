@@ -29,6 +29,7 @@ model Profile{
     userId    Int   @unique
     firstName String
     lastName  String
+    profilePicture String @default("NULL")
     department String @default("NULL")
 }
 

@@ -12,7 +12,7 @@ interface FormFieldProps {
 export function FormField({
     htmlFor,
     label,
-    type = "text",
+    type,
     value,
     onChange = () => { },
     error = ""
